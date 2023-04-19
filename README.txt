@@ -1,0 +1,1 @@
+Aixo es el git de projecte de M6 de Oleg i eric sobre un xat amb connexio a Mongodb
