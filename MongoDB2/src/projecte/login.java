@@ -153,7 +153,7 @@ public class login extends javax.swing.JFrame {
             // Si el usuario y la contraseña son correctos, abrir el chat
             setVisible(false);
             String usuari = usernameField.getText();
-            new WhatsappVista(usuari).setVisible(true);// Mostrar la ventana principal "whatsapp"
+            new chats(usuari).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Usuari i/o Contrassenya Incorrectes", "Error", JOptionPane.ERROR_MESSAGE);
         }

@@ -11,11 +11,16 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.toedter.calendar.JCalendar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.DefaultListModel;
@@ -29,6 +34,7 @@ import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 public class WhatsappVista extends JFrame {
 
@@ -47,11 +53,15 @@ public class WhatsappVista extends JFrame {
     private String horaEl;
     private String avui;
     private String usuari;
+    private String xat;
+    private Date selectedDate;
     
-    public WhatsappVista(String usuari2) {
+    public WhatsappVista(String usuari2, String xat2) {
         initComponents();
         setTitle("Xat");
         usuari = usuari2;
+        
+        xat = xat2;
         mongoClient = MongoClients.create();
         database = mongoClient.getDatabase("whatsapp");
         collection = database.getCollection("missatges");
@@ -60,7 +70,8 @@ public class WhatsappVista extends JFrame {
         messageListModel = new DefaultListModel<String>();
         messageList = new JList<String>(messageListModel);
         jScrollPanel.setViewportView(messageList);
-        FindIterable<Document> messages = collection.find();
+        Bson filter = Filters.eq("xat", xat);
+        FindIterable<Document> messages = collection.find(filter);
         horaFormat = new SimpleDateFormat("HH:mm:ss");
         dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         
@@ -70,14 +81,36 @@ public class WhatsappVista extends JFrame {
             String hora = horaFormat.format(message.getDate("hora"));
             avui = dateFormat.format(message.getDate("hora"));
             messageListModel.addElement(user + ": " + text + " (" + hora + ")");
-            dia.setText(avui);
+            
         }
         
+        String formattedDate = dateFormat.format(new Date());
+        dia.setText(formattedDate);
+        nomxat.setText(xat);
+        
         // Configurar el timer para recargar la información del chat cada segundo
+        
         timer = new Timer(1000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 messageListModel.clear();
-                
+                if(selectedDate == null){
+                    selectedDate = new Date();
+                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(selectedDate);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                Date startOfDay = calendar.getTime();
+                calendar.set(Calendar.HOUR_OF_DAY, 23);
+                calendar.set(Calendar.MINUTE, 59);
+                calendar.set(Calendar.SECOND, 59);
+                Date endOfDay = calendar.getTime();
+
+
+                // Añadir el filtro a la consulta existente
+                query.put("hora", new BasicDBObject("$gte", startOfDay).append("$lte", endOfDay));
+                query.put("xat", new Document("$eq", xat));
                 FindIterable<Document> messages = collection.find(query);
                 for (Document message : messages) {
                     String user = message.getString("user");
@@ -128,6 +161,9 @@ public class WhatsappVista extends JFrame {
         titol = new javax.swing.JLabel();
         dia = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        sortirConv = new javax.swing.JButton();
+        logOut = new javax.swing.JButton();
+        nomxat = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -160,9 +196,10 @@ public class WhatsappVista extends JFrame {
         );
         chatPanelLayout.setVerticalGroup(
             chatPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, chatPanelLayout.createSequentialGroup()
+            .addGroup(chatPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))
+                .addComponent(jScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         titol.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
@@ -183,6 +220,22 @@ public class WhatsappVista extends JFrame {
             }
         });
 
+        sortirConv.setText("Sortir de la Conversació");
+        sortirConv.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sortirConvActionPerformed(evt);
+            }
+        });
+
+        logOut.setText("Log Out");
+        logOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logOutActionPerformed(evt);
+            }
+        });
+
+        nomxat.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -192,7 +245,9 @@ public class WhatsappVista extends JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(titol, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nomxat, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(dia, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
@@ -207,7 +262,9 @@ public class WhatsappVista extends JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jCalendar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(sortirConv, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(logOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(28, 28, 28))))
         );
         layout.setVerticalGroup(
@@ -216,20 +273,25 @@ public class WhatsappVista extends JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(titol, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                    .addComponent(dia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(dia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(nomxat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCalendar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
+                        .addComponent(jButton1)
+                        .addGap(18, 18, 18)
+                        .addComponent(sortirConv)
+                        .addGap(18, 18, 18)
+                        .addComponent(logOut))
                     .addComponent(chatPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(35, 35, 35)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sendButton)
                     .addComponent(missatge, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
@@ -244,7 +306,8 @@ public class WhatsappVista extends JFrame {
             String message = missatge.getText();
             Document doc = new Document("user", user)
                             .append("missatge", message)
-                            .append("hora", new Date());
+                            .append("hora", new Date())
+                            .append("xat", nomxat.getText());
             collection.insertOne(doc);
             messageListModel.addElement(user + ": " + message);
             missatge.setText("");
@@ -254,7 +317,7 @@ public class WhatsappVista extends JFrame {
     private void jCalendar1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jCalendar1PropertyChange
        
         if ("calendar".equals(evt.getPropertyName())) {
-            Date selectedDate = jCalendar1.getCalendar().getTime();
+            selectedDate = jCalendar1.getCalendar().getTime();
             // Usa la fecha seleccionada en lo que necesites hacer a continuación
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             
@@ -274,7 +337,12 @@ public class WhatsappVista extends JFrame {
             calendar.set(Calendar.MINUTE, 59);
             calendar.set(Calendar.SECOND, 59);
             Date endOfDay = calendar.getTime();
+            
+
+            // Añadir el filtro a la consulta existente
             query.put("hora", new BasicDBObject("$gte", startOfDay).append("$lte", endOfDay));
+            query.put("xat", new Document("$eq", xat));
+
 
             // Obtener los mensajes que coinciden con la consulta
             FindIterable<Document> messages = collection.find(query);
@@ -321,6 +389,19 @@ public class WhatsappVista extends JFrame {
         
         
     }//GEN-LAST:event_jButton1MouseClicked
+
+    private void sortirConvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortirConvActionPerformed
+        
+        timer.stop();
+        dispose();
+        new chats(usuari).setVisible(true);
+        
+    }//GEN-LAST:event_sortirConvActionPerformed
+
+    private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed
+        setVisible(false);
+        new login().setVisible(true);
+    }//GEN-LAST:event_logOutActionPerformed
     
     
     
@@ -369,8 +450,11 @@ public class WhatsappVista extends JFrame {
     private com.toedter.calendar.JCalendar jCalendar1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPanel;
+    private javax.swing.JButton logOut;
     private javax.swing.JTextField missatge;
+    private javax.swing.JLabel nomxat;
     private javax.swing.JButton sendButton;
+    private javax.swing.JButton sortirConv;
     private javax.swing.JLabel titol;
     // End of variables declaration//GEN-END:variables
 }
