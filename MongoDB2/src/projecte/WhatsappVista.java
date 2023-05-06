@@ -70,11 +70,26 @@ public class WhatsappVista extends JFrame {
         messageListModel = new DefaultListModel<String>();
         messageList = new JList<String>(messageListModel);
         jScrollPanel.setViewportView(messageList);
-        Bson filter = Filters.eq("xat", xat);
-        FindIterable<Document> messages = collection.find(filter);
+        
         horaFormat = new SimpleDateFormat("HH:mm:ss");
         dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date startOfDay = calendar.getTime();
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        Date endOfDay = calendar.getTime();
+
+
+        // Añadir el filtro a la consulta existente
+        query.put("hora", new BasicDBObject("$gte", startOfDay).append("$lte", endOfDay));
+        query.put("xat", new Document("$eq", xat));
+        FindIterable<Document> messages = collection.find(query);
         for (Document message : messages) {
             String user = message.getString("user");
             String text = message.getString("missatge");
@@ -106,8 +121,6 @@ public class WhatsappVista extends JFrame {
                 calendar.set(Calendar.MINUTE, 59);
                 calendar.set(Calendar.SECOND, 59);
                 Date endOfDay = calendar.getTime();
-
-
                 // Añadir el filtro a la consulta existente
                 query.put("hora", new BasicDBObject("$gte", startOfDay).append("$lte", endOfDay));
                 query.put("xat", new Document("$eq", xat));
@@ -116,6 +129,7 @@ public class WhatsappVista extends JFrame {
                     String user = message.getString("user");
                     String text = message.getString("missatge");
                     String dateStr = horaFormat.format(message.getDate("hora"));
+                    avui = dateFormat.format(message.getDate("hora"));
                     messageListModel.addElement(user + ": " + text + " (" + dateStr + ")");
                 }
             }
