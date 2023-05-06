@@ -41,31 +41,33 @@ public class whatsapp extends JFrame {
     private JFrame loginFrame;
     public whatsapp() {
         // Configurar la interfaz gráfica
-        showLoginWindow();
+        //showLoginWindow();
         this.setLayout(new BorderLayout());
         this.setTitle("WhatsApp Chat");
-        this.setVisible(false);
-
+        this.setVisible(true);
+        WhatsappView wv = new WhatsappView();
         // Panel contenedor con ancho máximo
         JPanel container = new JPanel();
         container.setLayout(new BorderLayout());
-        container.setMaximumSize(new Dimension(800, Integer.MAX_VALUE));
+        container.setMaximumSize(new Dimension(800, 400));
         container.setPreferredSize(new Dimension(800, 400));
         // Panel para el chat
         JPanel chatPanel = new JPanel(new BorderLayout());
         messageListModel = new DefaultListModel<String>();
         messageList = new JList<String>(messageListModel);
         chatPanel.add(new JScrollPane(messageList), BorderLayout.CENTER);
-        chatPanel.setMaximumSize(new Dimension(300, 400));
-        chatPanel.setPreferredSize(new Dimension(300, 400));
-        chatPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 100));
+        chatPanel.setMaximumSize(new Dimension(400, 400));
+        chatPanel.setPreferredSize(new Dimension(400, 400));
+        chatPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 50, 50));
+        
         // Panel para el calendario
         JPanel calendarPanel = new JPanel(new BorderLayout());
         JCalendar calendar = new JCalendar();
         calendarPanel.add(calendar, BorderLayout.CENTER);
         calendarPanel.setMaximumSize(new Dimension(200, 200));
         calendarPanel.setPreferredSize(new Dimension(200, 200));
-
+        calendarPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 50));
+        
         // Agregar paneles al contenedor
         container.add(chatPanel, BorderLayout.CENTER);
         container.add(calendarPanel, BorderLayout.EAST);
@@ -80,6 +82,7 @@ public class whatsapp extends JFrame {
         inputPanel.add(sendButton);
         inputPanel.setMaximumSize(new Dimension(200, 50));
         inputPanel.setPreferredSize(new Dimension(200, 50));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(0,50, 0, 300));
 
         // Agregar panel contenedor y panel de entrada al frame
         this.add(container, BorderLayout.CENTER);
