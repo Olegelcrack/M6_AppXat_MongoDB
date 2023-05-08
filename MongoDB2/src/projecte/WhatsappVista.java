@@ -12,32 +12,22 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.toedter.calendar.JCalendar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 
 public class WhatsappVista extends JFrame {
 
@@ -68,9 +58,9 @@ public class WhatsappVista extends JFrame {
         usuari = usuari2;
         
         xat = xat2;
-        mongoClient = MongoClients.create();
         
-        database = mongoClient2.getDatabase("whatsapp");
+        mongoClient = MongoClients.create("192.168.1.116");
+        database = mongoClient.getDatabase("whatsapp");
         collection = database.getCollection("missatges");
         collection2 = database.getCollection("usuaris");
 
