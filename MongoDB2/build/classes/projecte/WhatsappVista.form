@@ -103,6 +103,7 @@
     <Component class="javax.swing.JTextField" name="missatge">
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="missatgeActionPerformed"/>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="missatgePropertyChange"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">

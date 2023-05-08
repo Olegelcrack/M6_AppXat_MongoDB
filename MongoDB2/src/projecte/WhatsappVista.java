@@ -15,6 +15,8 @@ import com.mongodb.client.model.Filters;
 import com.toedter.calendar.JCalendar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -55,6 +57,7 @@ public class WhatsappVista extends JFrame {
     private String usuari;
     private String xat;
     private Date selectedDate;
+    private long missatges_antics;
     
     public WhatsappVista(String usuari2, String xat2) {
         initComponents();
@@ -105,9 +108,13 @@ public class WhatsappVista extends JFrame {
         
         // Configurar el timer para recargar la información del chat cada segundo
         
-        timer = new Timer(1000, new ActionListener() {
+        timer = new Timer(100, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                messageListModel.clear();
+                if(missatge.getText().isEmpty()){
+                    sendButton.setEnabled(false);
+                }else{
+                    sendButton.setEnabled(true);
+                }
                 if(selectedDate == null){
                     selectedDate = new Date();
                 }
@@ -125,13 +132,18 @@ public class WhatsappVista extends JFrame {
                 query.put("hora", new BasicDBObject("$gte", startOfDay).append("$lte", endOfDay));
                 query.put("xat", new Document("$eq", xat));
                 FindIterable<Document> messages = collection.find(query);
-                for (Document message : messages) {
-                    String user = message.getString("user");
-                    String text = message.getString("missatge");
-                    String dateStr = horaFormat.format(message.getDate("hora"));
-                    avui = dateFormat.format(message.getDate("hora"));
-                    messageListModel.addElement(user + ": " + text + " (" + dateStr + ")");
+                long count = collection.countDocuments(query);
+                if (count!=missatges_antics){
+                    messageListModel.clear();
+                    for (Document message : messages) {
+                        String user = message.getString("user");
+                        String text = message.getString("missatge");
+                        String dateStr = horaFormat.format(message.getDate("hora"));
+                        avui = dateFormat.format(message.getDate("hora"));
+                        messageListModel.addElement(user + ": " + text + " (" + dateStr + ")");
+                    }
                 }
+                missatges_antics = count;
             }
         });
         timer.start();
@@ -151,6 +163,23 @@ public class WhatsappVista extends JFrame {
                             horaEl = selectedMessage.substring(selectedMessage.lastIndexOf("(") + 1, selectedMessage.lastIndexOf(")"));
                         }
                     }
+                }
+            }
+        });
+        
+        
+        missatge.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && !missatge.getText().isEmpty()) {
+                    String user = usuari;
+                    String message = missatge.getText();
+                    Document doc = new Document("user", user)
+                                    .append("missatge", message)
+                                    .append("hora", new Date())
+                                    .append("xat", nomxat.getText());
+                    collection.insertOne(doc);
+                    messageListModel.addElement(user + ": " + message);
+                    missatge.setText("");
                 }
             }
         });
@@ -191,6 +220,11 @@ public class WhatsappVista extends JFrame {
         missatge.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 missatgeActionPerformed(evt);
+            }
+        });
+        missatge.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                missatgePropertyChange(evt);
             }
         });
 
@@ -317,15 +351,18 @@ public class WhatsappVista extends JFrame {
     }//GEN-LAST:event_missatgeActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
-            String user = usuari;
-            String message = missatge.getText();
-            Document doc = new Document("user", user)
-                            .append("missatge", message)
-                            .append("hora", new Date())
-                            .append("xat", nomxat.getText());
-            collection.insertOne(doc);
-            messageListModel.addElement(user + ": " + message);
-            missatge.setText("");
+        if(missatge.getText().isEmpty())
+            return;
+        
+        String user = usuari;
+        String message = missatge.getText();
+        Document doc = new Document("user", user)
+                        .append("missatge", message)
+                        .append("hora", new Date())
+                        .append("xat", nomxat.getText());
+        collection.insertOne(doc);
+        messageListModel.addElement(user + ": " + message);
+        missatge.setText("");
         
     }//GEN-LAST:event_sendButtonActionPerformed
 
@@ -378,9 +415,9 @@ public class WhatsappVista extends JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        if(usuariEl == null || usuariEl == ""){
+        if(usuariEl == null || usuariEl == "")
             JOptionPane.showMessageDialog(null, "No has seleccionat cap missatge", "Error", JOptionPane.ERROR_MESSAGE);
-        }else{
+        else{
             if(usuariEl.equals(usuari)){
                 String diaMissatgeString = avui +" "+ horaEl;
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -417,6 +454,10 @@ public class WhatsappVista extends JFrame {
         setVisible(false);
         new login().setVisible(true);
     }//GEN-LAST:event_logOutActionPerformed
+
+    private void missatgePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_missatgePropertyChange
+        sendButton.setEnabled(true);
+    }//GEN-LAST:event_missatgePropertyChange
     
     
     

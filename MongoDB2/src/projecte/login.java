@@ -11,6 +11,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import org.bson.Document;
 
@@ -34,6 +37,27 @@ public class login extends javax.swing.JFrame {
         mongoClient = MongoClients.create();
         database = mongoClient.getDatabase("whatsapp");
         collection2 = database.getCollection("usuaris");
+        
+        passwordField.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER
+                        ) {
+                    String user = usernameField.getText();
+                    char[] password = passwordField.getPassword();
+                    Document filtro = new Document("usuari", user).append("contrassenya", new String(password));
+                    Document userDoc = collection2.find(filtro).first();
+
+                    if (userDoc != null) {
+                        // Si el usuario y la contraseña son correctos, abrir el chat
+                        dispose();
+                        String usuari = usernameField.getText();
+                        new chats(usuari).setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Usuari i/o Contrassenya Incorrectes", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
 
     }
 
