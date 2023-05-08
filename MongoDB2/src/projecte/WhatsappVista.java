@@ -6,6 +6,7 @@
 package projecte;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -58,7 +59,9 @@ public class WhatsappVista extends JFrame {
     private String xat;
     private Date selectedDate;
     private long missatges_antics;
-    
+    public static String connectionString = "mongodb://localhost:27017/";
+    public static MongoClientURI uri = new MongoClientURI(connectionString);
+    public static com.mongodb.MongoClient mongoClient2 = new com.mongodb.MongoClient(uri);
     public WhatsappVista(String usuari2, String xat2) {
         initComponents();
         setTitle("Xat");
@@ -66,7 +69,8 @@ public class WhatsappVista extends JFrame {
         
         xat = xat2;
         mongoClient = MongoClients.create();
-        database = mongoClient.getDatabase("whatsapp");
+        
+        database = mongoClient2.getDatabase("whatsapp");
         collection = database.getCollection("missatges");
         collection2 = database.getCollection("usuaris");
 
@@ -220,11 +224,6 @@ public class WhatsappVista extends JFrame {
         missatge.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 missatgeActionPerformed(evt);
-            }
-        });
-        missatge.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                missatgePropertyChange(evt);
             }
         });
 
@@ -454,10 +453,6 @@ public class WhatsappVista extends JFrame {
         setVisible(false);
         new login().setVisible(true);
     }//GEN-LAST:event_logOutActionPerformed
-
-    private void missatgePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_missatgePropertyChange
-        sendButton.setEnabled(true);
-    }//GEN-LAST:event_missatgePropertyChange
     
     
     
