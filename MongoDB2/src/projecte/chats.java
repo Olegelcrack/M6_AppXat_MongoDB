@@ -64,6 +64,8 @@ public class chats extends javax.swing.JFrame {
                     if (index != -1) {
                         xat =  "";
                         xat = messageList.getModel().getElementAt(index);
+                        dispose();
+                        new WhatsappVista(usuari, xat).setVisible(true);
                     }
                 }
             }
@@ -81,7 +83,6 @@ public class chats extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        escollir = new javax.swing.JButton();
         logOut = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
@@ -97,13 +98,6 @@ public class chats extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
         );
-
-        escollir.setText("Seleccionar");
-        escollir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                escollirActionPerformed(evt);
-            }
-        });
 
         logOut.setForeground(new java.awt.Color(255, 51, 51));
         logOut.setText("Log Out");
@@ -126,8 +120,7 @@ public class chats extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(109, 109, 109)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(logOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(escollir, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .addComponent(logOut, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(65, 65, 65)
@@ -141,25 +134,13 @@ public class chats extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(11, 11, 11)
-                .addComponent(escollir)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(logOut)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void escollirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_escollirActionPerformed
-        if(xat == null || xat == ""){
-            JOptionPane.showMessageDialog(null, "No has seleccionat cap conversació", "Error", JOptionPane.ERROR_MESSAGE);
-        }else{
-            setVisible(false);
-            new WhatsappVista(usuari, xat).setVisible(true);
-        }
-        
-    }//GEN-LAST:event_escollirActionPerformed
 
     private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed
         setVisible(false);
@@ -202,7 +183,6 @@ public class chats extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton escollir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
