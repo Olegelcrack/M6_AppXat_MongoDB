@@ -6,7 +6,6 @@
 package projecte;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -49,17 +48,14 @@ public class WhatsappVista extends JFrame {
     private String xat;
     private Date selectedDate;
     private long missatges_antics;
-    public static String connectionString = "mongodb://localhost:27017/";
-    public static MongoClientURI uri = new MongoClientURI(connectionString);
-    public static com.mongodb.MongoClient mongoClient2 = new com.mongodb.MongoClient(uri);
+    
     public WhatsappVista(String usuari2, String xat2) {
         initComponents();
         setTitle("Xat");
         usuari = usuari2;
         
         xat = xat2;
-        
-        mongoClient = MongoClients.create("192.168.1.116");
+        mongoClient = MongoClients.create("mongodb://localhost/27017");
         database = mongoClient.getDatabase("whatsapp");
         collection = database.getCollection("missatges");
         collection2 = database.getCollection("usuaris");
@@ -112,6 +108,7 @@ public class WhatsappVista extends JFrame {
                 if(selectedDate == null){
                     selectedDate = new Date();
                 }
+                
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(selectedDate);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -167,12 +164,17 @@ public class WhatsappVista extends JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER && !missatge.getText().isEmpty()) {
                     String user = usuari;
                     String message = missatge.getText();
+                    String dateStr = horaFormat.format(new Date());
                     Document doc = new Document("user", user)
                                     .append("missatge", message)
                                     .append("hora", new Date())
                                     .append("xat", nomxat.getText());
                     collection.insertOne(doc);
-                    messageListModel.addElement(user + ": " + message);
+                    if(selectedDate != new Date()){
+                        
+                    }else{
+                        messageListModel.addElement(user + ": " + message + " (" + dateStr + ")");
+                    }
                     missatge.setText("");
                 }
             }
@@ -345,12 +347,17 @@ public class WhatsappVista extends JFrame {
         
         String user = usuari;
         String message = missatge.getText();
+        String dateStr = horaFormat.format(new Date());
         Document doc = new Document("user", user)
                         .append("missatge", message)
                         .append("hora", new Date())
                         .append("xat", nomxat.getText());
         collection.insertOne(doc);
-        messageListModel.addElement(user + ": " + message);
+        if(selectedDate != new Date()){
+
+        }else{
+            messageListModel.addElement(user + ": " + message + " (" + dateStr + ")");
+        }
         missatge.setText("");
         
     }//GEN-LAST:event_sendButtonActionPerformed

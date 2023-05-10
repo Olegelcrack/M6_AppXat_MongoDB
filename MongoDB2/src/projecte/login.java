@@ -34,7 +34,7 @@ public class login extends javax.swing.JFrame {
     public login() {
         initComponents();
         setTitle("Iniciar sessió");
-        mongoClient = MongoClients.create();
+        mongoClient = MongoClients.create("mongodb://127.0.0.1:27017");
         database = mongoClient.getDatabase("whatsapp");
         collection2 = database.getCollection("usuaris");
         
