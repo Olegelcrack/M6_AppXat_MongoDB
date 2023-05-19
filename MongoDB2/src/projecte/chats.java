@@ -64,8 +64,7 @@ public class chats extends javax.swing.JFrame {
                     if (index != -1) {
                         xat =  "";
                         xat = messageList.getModel().getElementAt(index);
-                        dispose();
-                        new WhatsappVista(usuari, xat).setVisible(true);
+                        
                     }
                 }
             }
@@ -85,6 +84,10 @@ public class chats extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         logOut = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        addXat = new javax.swing.JButton();
+        joinXat = new javax.swing.JButton();
+        deleteXat = new javax.swing.JButton();
+        entrarXat = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -111,20 +114,52 @@ public class chats extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("CONVERSACIONS");
 
+        addXat.setText("Afegir Conversació");
+        addXat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addXatActionPerformed(evt);
+            }
+        });
+
+        joinXat.setText("Unir-se a una Conversació");
+        joinXat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                joinXatActionPerformed(evt);
+            }
+        });
+
+        deleteXat.setText("Eliminar Conversació");
+        deleteXat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteXatActionPerformed(evt);
+            }
+        });
+
+        entrarXat.setText("Entrar a la Conversació");
+        entrarXat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                entrarXatActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(65, 65, 65)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(109, 109, 109)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(logOut, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(65, 65, 65)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(logOut, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(addXat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(joinXat, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                                .addComponent(deleteXat, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                                .addComponent(entrarXat, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)))
+                        .addGap(45, 45, 45)))
                 .addContainerGap(62, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -134,9 +169,17 @@ public class chats extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(entrarXat)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(addXat)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(joinXat)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(deleteXat)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(logOut)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addGap(11, 11, 11))
         );
 
         pack();
@@ -146,6 +189,25 @@ public class chats extends javax.swing.JFrame {
         setVisible(false);
         new login().setVisible(true);
     }//GEN-LAST:event_logOutActionPerformed
+
+    private void addXatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addXatActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addXatActionPerformed
+
+    private void joinXatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinXatActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_joinXatActionPerformed
+
+    private void deleteXatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteXatActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_deleteXatActionPerformed
+
+    private void entrarXatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrarXatActionPerformed
+        if(!xat.isEmpty()){
+            dispose();
+            new WhatsappVista(usuari, xat).setVisible(true);
+        }
+    }//GEN-LAST:event_entrarXatActionPerformed
 
     /**
      * @param args the command line arguments
@@ -183,9 +245,13 @@ public class chats extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addXat;
+    private javax.swing.JButton deleteXat;
+    private javax.swing.JButton entrarXat;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton joinXat;
     private javax.swing.JButton logOut;
     // End of variables declaration//GEN-END:variables
 }
