@@ -9,10 +9,12 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import org.bson.Document;
@@ -30,7 +32,8 @@ public class login extends javax.swing.JFrame {
     private MongoClient mongoClient;
     private MongoDatabase database;
     public MongoCollection<Document> collection2;
-    
+    private boolean isAdmin;
+    private Document filtro;
     public login() {
         initComponents();
         setTitle("Iniciar sessió");
@@ -44,14 +47,15 @@ public class login extends javax.swing.JFrame {
                         ) {
                     String user = usernameField.getText();
                     char[] password = passwordField.getPassword();
-                    Document filtro = new Document("usuari", user).append("contrassenya", new String(password));
+                    filtro = new Document("usuari", user).append("contrassenya", new String(password));
                     Document userDoc = collection2.find(filtro).first();
 
                     if (userDoc != null) {
                         // Si el usuario y la contraseña son correctos, abrir el chat
                         dispose();
+                        isAdmin = userDoc.getBoolean("admin", false);
                         String usuari = usernameField.getText();
-                        new chats(usuari).setVisible(true);
+                        new chats(usuari,isAdmin,filtro).setVisible(true);
                     } else {
                         JOptionPane.showMessageDialog(null, "Usuari i/o Contrassenya Incorrectes", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -192,7 +196,7 @@ public class login extends javax.swing.JFrame {
             // Si el usuario y la contraseña son correctos, abrir el chat
             dispose();
             String usuari = usernameField.getText();
-            new chats(usuari).setVisible(true);
+            new chats(usuari,isAdmin,filtro).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Usuari i/o Contrassenya Incorrectes", "Error", JOptionPane.ERROR_MESSAGE);
         }

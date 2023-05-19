@@ -11,12 +11,14 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.DefaultListModel;
@@ -48,13 +50,18 @@ public class WhatsappVista extends JFrame {
     private String xat;
     private Date selectedDate;
     private long missatges_antics;
-    
-    public WhatsappVista(String usuari2, String xat2) {
+    private boolean isAdmin;
+    private ArrayList<String> xats;
+    private Document filtrouser;
+    public WhatsappVista(String usuari, String xat, boolean isAdmin, Document filtro) {
         initComponents();
         setTitle("Xat");
-        usuari = usuari2;
+        this.usuari = usuari;
+        this.isAdmin = isAdmin;
+        this.xat = xat;
+        this.xats = xats;
+        this.filtrouser = filtro;
         
-        xat = xat2;
         mongoClient = MongoClients.create("mongodb://localhost/27017");
         database = mongoClient.getDatabase("whatsapp");
         collection = database.getCollection("missatges");
@@ -179,6 +186,7 @@ public class WhatsappVista extends JFrame {
                 }
             }
         });
+        
         
     }
 
@@ -442,7 +450,7 @@ public class WhatsappVista extends JFrame {
         
         timer.stop();
         dispose();
-        new chats(usuari).setVisible(true);
+        new chats(usuari, isAdmin,filtrouser).setVisible(true);
         
     }//GEN-LAST:event_sortirConvActionPerformed
 

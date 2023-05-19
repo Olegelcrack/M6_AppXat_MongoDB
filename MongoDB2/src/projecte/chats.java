@@ -12,6 +12,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import java.awt.Font;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -34,27 +35,33 @@ public class chats extends javax.swing.JFrame {
     private MongoClient mongoClient;
     private MongoDatabase database;
     private MongoCollection<Document> collection3;
+    private MongoCollection<Document> collection2;
     private String usuari;
     private String xat;
-    public chats(String usuari2) {
+    private boolean isAdmin;
+    private boolean newConv;
+    private Document filtrouser;
+    private ArrayList<String> xats;
+    private ArrayList<String> xatsNom;
+    public chats(String usuari2, boolean isAdmin, Document filtro) {
         initComponents();
         setTitle("Conversacions");
-        usuari = usuari2;
+        
+        this.usuari = usuari2;
+        this.isAdmin = isAdmin;
+        this.filtrouser = filtro;
         mongoClient = MongoClients.create();
         database = mongoClient.getDatabase("whatsapp");
         collection3 = database.getCollection("grups");
-
+        collection2 = database.getCollection("usuaris");
+        
         messageListModel = new DefaultListModel<String>();
         messageList = new JList<String>(messageListModel);
         messageList.setFont(new Font(messageList.getFont().getName(), Font.PLAIN, 16));
         messageList.setAlignmentY(TOP_ALIGNMENT);
         jScrollPane1.setViewportView(messageList);
-        FindIterable<Document> conversacions = collection3.find();
         
-        for (Document conversacio : conversacions) {
-            String nom_grup = conversacio.getString("nom");
-            messageListModel.addElement(nom_grup);
-        }
+        recarregarConversacions();
         
         messageList.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -62,13 +69,26 @@ public class chats extends javax.swing.JFrame {
                 if (!e.getValueIsAdjusting()) {
                     int index = messageList.getSelectedIndex();
                     if (index != -1) {
-                        xat =  "";
-                        xat = messageList.getModel().getElementAt(index);
+                        if(newConv == true){
+                            addConvers();
+                            recarregarConversacions();
+                        }else{
+                            xat =  "";
+                            xat = messageList.getModel().getElementAt(index);
+                        }
                         
                     }
                 }
             }
         });
+         
+        if(!isAdmin){
+            addXat.setVisible(false);
+            nouXat.setVisible(false);
+        }else{
+            addXat.setVisible(true);
+            nouXat.setVisible(true);
+        }
     }
 
     /**
@@ -88,6 +108,7 @@ public class chats extends javax.swing.JFrame {
         joinXat = new javax.swing.JButton();
         deleteXat = new javax.swing.JButton();
         entrarXat = new javax.swing.JButton();
+        nouXat = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -142,6 +163,12 @@ public class chats extends javax.swing.JFrame {
             }
         });
 
+        nouXat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nouXatActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -152,13 +179,16 @@ public class chats extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(logOut, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(logOut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(addXat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(joinXat, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                                 .addComponent(deleteXat, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                                .addComponent(entrarXat, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)))
+                                .addComponent(entrarXat, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(nouXat)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(addXat))))
                         .addGap(45, 45, 45)))
                 .addContainerGap(62, Short.MAX_VALUE))
         );
@@ -172,14 +202,16 @@ public class chats extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(entrarXat)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(addXat)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(joinXat)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(deleteXat)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(logOut)
-                .addGap(11, 11, 11))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addXat)
+                    .addComponent(nouXat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         pack();
@@ -191,24 +223,149 @@ public class chats extends javax.swing.JFrame {
     }//GEN-LAST:event_logOutActionPerformed
 
     private void addXatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addXatActionPerformed
-        // TODO add your handling code here:
+        if(nouXat.getText().isEmpty()){
+            return;
+        }
+        Document lastChat = collection3.find().sort(new Document("_id", -1)).first();
+        int newId = 0;
+        if (lastChat != null) {
+            String lastId = lastChat.getString("_id");
+            newId = Integer.parseInt(lastId) + 1;
+        }
+
+        // Comprobar si el nombre existe en otro grupo
+        String newNom = nouXat.getText();
+        Document existingChat = collection3.find(new Document("nom", newNom)).first();
+        if (existingChat != null) {
+            // El nombre ya existe en otro grupo, mostrar un mensaje de error
+            JOptionPane.showMessageDialog(null, "El xat ja existeix", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Crear el nuevo chat
+        String newIdString = String.valueOf(newId);
+        Document newChat = new Document("_id", newIdString)
+                .append("nom", newNom);
+        collection3.insertOne(newChat);
+        nouXat.setText("");
+        recarregarConversacions();
     }//GEN-LAST:event_addXatActionPerformed
 
     private void joinXatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinXatActionPerformed
-        // TODO add your handling code here:
+        if(newConv == false){
+            Document query = new Document("_id", new Document("$nin", xats));
+            FindIterable<Document> conversacions = collection3.find(query);
+            newConv = true;
+            messageListModel.clear();
+            for (Document conversacio : conversacions) {
+                String nom_grup = conversacio.getString("nom");
+                messageListModel.addElement(nom_grup);
+            }
+        }else{
+            newConv = false;
+            recarregarConversacions();
+        }
+        
+        
+        
     }//GEN-LAST:event_joinXatActionPerformed
 
     private void deleteXatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteXatActionPerformed
-        // TODO add your handling code here:
+        String xatSeleccionado = messageList.getSelectedValue();
+        Document filtro = new Document("nom", xatSeleccionado);
+        Document chatDoc = collection3.find(filtro).first();
+        String id_xat;
+        if (chatDoc != null) {
+            id_xat = chatDoc.getString("_id");
+        } else {
+            id_xat = ""; // El chat no existe
+        }
+        if (xatSeleccionado != null) {
+
+            Document filtro2 = new Document("usuari", usuari);
+
+            // Construye la actualización para eliminar el xat de la lista
+            Document update = new Document("$pull", new Document("xats", id_xat));
+
+            // Actualiza el documento del usuario en MongoDB
+            collection2.updateOne(filtro2, update);
+            recarregarConversacions();
+        }
     }//GEN-LAST:event_deleteXatActionPerformed
 
     private void entrarXatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrarXatActionPerformed
-        if(!xat.isEmpty()){
-            dispose();
-            new WhatsappVista(usuari, xat).setVisible(true);
+         if(xat != null){
+            String xatSeleccionado = messageList.getSelectedValue();
+            
+            if (xatsNom.contains(xatSeleccionado)) {
+                dispose();
+                new WhatsappVista(usuari, xat, isAdmin, filtrouser).setVisible(true);
+            }else{
+                JOptionPane.showMessageDialog(null, "No estàs unit al xat seleccionat.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
+        }else{
+            JOptionPane.showMessageDialog(null, "No has seleccionat cap xat.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_entrarXatActionPerformed
 
+    private void nouXatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nouXatActionPerformed
+                // TODO add your handling code here:
+    }//GEN-LAST:event_nouXatActionPerformed
+
+    public void recarregarConversacions(){
+        Document userDoc = collection2.find(filtrouser).first();
+        if (userDoc != null) {
+           ArrayList<Object> xatsObject = userDoc.get("xats", ArrayList.class);
+           xats = new ArrayList<>();
+           xatsNom = new ArrayList<>();
+           for (Object xatObject : xatsObject) {
+               xats.add(String.valueOf(xatObject));
+               
+           }
+        }
+        Document query = new Document("_id", new Document("$in", xats));
+        FindIterable<Document> conversacions = collection3.find(query);
+
+        // Iterar sobre los xats y mostrarlos en la lista de mensajes
+        messageListModel.clear();
+        for (Document conversacio : conversacions) {
+            String nom_grup = conversacio.getString("nom");
+            xatsNom.add(nom_grup);
+            messageListModel.addElement(nom_grup);
+        }
+    }
+    
+    public void addConvers(){
+        String xatSeleccionado = messageList.getSelectedValue();
+        String id_xat;
+        if (xatSeleccionado != null) {
+
+            // Obtener la ID del xat seleccionado por su nombre
+            Document filtro = new Document("nom", xatSeleccionado);
+            Document chatDoc = collection3.find(filtro).first();
+            if (chatDoc != null) {
+                id_xat = chatDoc.getString("_id");
+            } else {
+                id_xat = ""; // El chat no existe
+            }
+            if (id_xat != null) {
+                // Construir el filtro para encontrar el documento del usuario
+                Document filtro2 = new Document("usuari", usuari);
+
+                // Construir la actualización para añadir la ID del xat a la lista
+                Document update = new Document("$addToSet", new Document("xats", id_xat));
+
+                // Actualizar el documento del usuario en MongoDB
+                collection2.updateOne(filtro2, update);
+
+                // Actualizar la lista de mensajes mostrada en la interfaz
+                newConv = false;
+            } else {
+                JOptionPane.showMessageDialog(null, "El chat seleccionado no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -253,5 +410,6 @@ public class chats extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton joinXat;
     private javax.swing.JButton logOut;
+    private javax.swing.JTextField nouXat;
     // End of variables declaration//GEN-END:variables
 }
