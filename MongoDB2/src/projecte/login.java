@@ -45,20 +45,7 @@ public class login extends javax.swing.JFrame {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER
                         ) {
-                    String user = usernameField.getText();
-                    char[] password = passwordField.getPassword();
-                    filtro = new Document("usuari", user).append("contrassenya", new String(password));
-                    Document userDoc = collection2.find(filtro).first();
-
-                    if (userDoc != null) {
-                        // Si el usuario y la contraseña son correctos, abrir el chat
-                        dispose();
-                        isAdmin = userDoc.getBoolean("admin", false);
-                        String usuari = usernameField.getText();
-                        new chats(usuari,isAdmin,filtro).setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Usuari i/o Contrassenya Incorrectes", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+                    IniciarSessio();
                 }
             }
         });
@@ -165,12 +152,12 @@ public class login extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(31, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(22, Short.MAX_VALUE))
         );
@@ -187,21 +174,25 @@ public class login extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelarActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
+        IniciarSessio();
+    }//GEN-LAST:event_loginButtonActionPerformed
+    
+    public void IniciarSessio(){
         String user = usernameField.getText();
         char[] password = passwordField.getPassword();
-        Document filtro = new Document("usuari", user).append("contrassenya", new String(password));
+        filtro = new Document("usuari", user).append("contrassenya", new String(password));
         Document userDoc = collection2.find(filtro).first();
 
         if (userDoc != null) {
             // Si el usuario y la contraseña son correctos, abrir el chat
             dispose();
+            isAdmin = userDoc.getBoolean("admin", false);
             String usuari = usernameField.getText();
             new chats(usuari,isAdmin,filtro).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Usuari i/o Contrassenya Incorrectes", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_loginButtonActionPerformed
-
+    }
     /**
      * @param args the command line arguments
      */

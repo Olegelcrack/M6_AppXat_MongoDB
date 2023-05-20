@@ -27,9 +27,6 @@ import org.bson.Document;
  */
 public class chats extends javax.swing.JFrame {
 
-    /**
-     * Creates new form chats
-     */
     private DefaultListModel<String> messageListModel;
     private JList<String> messageList;
     private MongoClient mongoClient;
@@ -81,8 +78,8 @@ public class chats extends javax.swing.JFrame {
                 }
             }
         });
-         
-        if(!isAdmin){
+         System.out.println(this.isAdmin);
+        if(!this.isAdmin){
             addXat.setVisible(false);
             nouXat.setVisible(false);
         }else{
@@ -103,7 +100,7 @@ public class chats extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         logOut = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        conv = new javax.swing.JLabel();
         addXat = new javax.swing.JButton();
         joinXat = new javax.swing.JButton();
         deleteXat = new javax.swing.JButton();
@@ -131,9 +128,9 @@ public class chats extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("CONVERSACIONS");
+        conv.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        conv.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        conv.setText("LES TEVES CONVERSACIONS");
 
         addXat.setText("Afegir Conversació");
         addXat.addActionListener(new java.awt.event.ActionListener() {
@@ -174,9 +171,9 @@ public class chats extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(65, 65, 65)
+                .addContainerGap(65, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(conv, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(logOut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -195,8 +192,8 @@ public class chats extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(conv, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -256,6 +253,7 @@ public class chats extends javax.swing.JFrame {
             Document query = new Document("_id", new Document("$nin", xats));
             FindIterable<Document> conversacions = collection3.find(query);
             newConv = true;
+            conv.setText("CONVERSACIONS PER UNIR-SE");
             messageListModel.clear();
             for (Document conversacio : conversacions) {
                 String nom_grup = conversacio.getString("nom");
@@ -263,6 +261,7 @@ public class chats extends javax.swing.JFrame {
             }
         }else{
             newConv = false;
+            conv.setText("LES TEVES CONVERSACIONS");
             recarregarConversacions();
         }
         
@@ -403,9 +402,9 @@ public class chats extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addXat;
+    private javax.swing.JLabel conv;
     private javax.swing.JButton deleteXat;
     private javax.swing.JButton entrarXat;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton joinXat;

@@ -20,7 +20,8 @@ usuari1 = {
     "usuari" : "eric",
     "contrassenya" : "123",
     "admin" : true,
-    "xats" : ['0']
+    "xats" : ['0'],
+    "img" : null
 
 }
 
@@ -30,7 +31,8 @@ usuari2 = {
     "usuari" : "oleg",
     "contrassenya" : "123",
     "admin" : false,
-    "xats" : ['1']
+    "xats" : ['1'],
+    "img" : null
 
 }
 
