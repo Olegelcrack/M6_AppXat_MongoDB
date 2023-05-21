@@ -230,16 +230,13 @@ public class chats extends javax.swing.JFrame {
             newId = Integer.parseInt(lastId) + 1;
         }
 
-        // Comprobar si el nombre existe en otro grupo
         String newNom = nouXat.getText();
         Document existingChat = collection3.find(new Document("nom", newNom)).first();
         if (existingChat != null) {
-            // El nombre ya existe en otro grupo, mostrar un mensaje de error
             JOptionPane.showMessageDialog(null, "El xat ja existeix", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Crear el nuevo chat
         String newIdString = String.valueOf(newId);
         Document newChat = new Document("_id", newIdString)
                 .append("nom", newNom);
@@ -277,16 +274,14 @@ public class chats extends javax.swing.JFrame {
         if (chatDoc != null) {
             id_xat = chatDoc.getString("_id");
         } else {
-            id_xat = ""; // El chat no existe
+            id_xat = "";
         }
         if (xatSeleccionado != null) {
 
             Document filtro2 = new Document("usuari", usuari);
 
-            // Construye la actualización para eliminar el xat de la lista
             Document update = new Document("$pull", new Document("xats", id_xat));
 
-            // Actualiza el documento del usuario en MongoDB
             collection2.updateOne(filtro2, update);
             recarregarConversacions();
         }
@@ -326,7 +321,6 @@ public class chats extends javax.swing.JFrame {
         Document query = new Document("_id", new Document("$in", xats));
         FindIterable<Document> conversacions = collection3.find(query);
 
-        // Iterar sobre los xats y mostrarlos en la lista de mensajes
         messageListModel.clear();
         for (Document conversacio : conversacions) {
             String nom_grup = conversacio.getString("nom");
@@ -340,25 +334,20 @@ public class chats extends javax.swing.JFrame {
         String id_xat;
         if (xatSeleccionado != null) {
 
-            // Obtener la ID del xat seleccionado por su nombre
             Document filtro = new Document("nom", xatSeleccionado);
             Document chatDoc = collection3.find(filtro).first();
             if (chatDoc != null) {
                 id_xat = chatDoc.getString("_id");
             } else {
-                id_xat = ""; // El chat no existe
+                id_xat = ""; 
             }
             if (id_xat != null) {
-                // Construir el filtro para encontrar el documento del usuario
                 Document filtro2 = new Document("usuari", usuari);
 
-                // Construir la actualización para añadir la ID del xat a la lista
                 Document update = new Document("$addToSet", new Document("xats", id_xat));
 
-                // Actualizar el documento del usuario en MongoDB
                 collection2.updateOne(filtro2, update);
 
-                // Actualizar la lista de mensajes mostrada en la interfaz
                 newConv = false;
             } else {
                 JOptionPane.showMessageDialog(null, "El chat seleccionado no existe.", "Error", JOptionPane.ERROR_MESSAGE);

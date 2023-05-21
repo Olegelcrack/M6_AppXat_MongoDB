@@ -97,7 +97,6 @@ public class WhatsappVista extends JFrame {
         Date endOfDay = calendar.getTime();
 
 
-        // Añadir el filtro a la consulta existente
         query.put("hora", new BasicDBObject("$gte", startOfDay).append("$lte", endOfDay));
         query.put("xat", new Document("$eq", xat));
         FindIterable<Document> messages = collection.find(query);
@@ -127,14 +126,7 @@ public class WhatsappVista extends JFrame {
                     selectedDate = new Date();
                 }
                 
-                newColor = bean_prova2.getMode();
-                getContentPane().setBackground(newColor);
-                Color newColor2 = bean_prova2.getMode2();
-                miss.setForeground(newColor2);
-                nomxat.setForeground(newColor2);
-                titol.setForeground(newColor2);
-                dia.setForeground(newColor2);
-                calendari.setForeground(newColor2);
+
                 
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(selectedDate);
@@ -147,11 +139,7 @@ public class WhatsappVista extends JFrame {
                 calendar.set(Calendar.SECOND, 59);
                 Date endOfDay = calendar.getTime();
                 // Añadir el filtro a la consulta existente
-                if(uploadPhoto1.getFileBytes() != null){
-                    img = uploadPhoto1.getFileBytes();
-                    uploadPhoto();
-                }else{
-                }
+                
                 cargarPerfil();
                 
                 query.put("hora", new BasicDBObject("$gte", startOfDay).append("$lte", endOfDay));
@@ -189,6 +177,29 @@ public class WhatsappVista extends JFrame {
                         }
                     }
                 }
+            }
+        });
+        uploadPhoto1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(uploadPhoto1.getFileBytes() != null){
+                    img = uploadPhoto1.getFileBytes();
+                    uploadPhoto();
+                }else{
+                }
+            }
+        });
+        bean_prova2.addModeChangeListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newColor = bean_prova2.getMode();
+                getContentPane().setBackground(newColor);
+                Color newColor2 = bean_prova2.getMode2();
+                miss.setForeground(newColor2);
+                nomxat.setForeground(newColor2);
+                titol.setForeground(newColor2);
+                dia.setForeground(newColor2);
+                calendari.setForeground(newColor2);
             }
         });
         
@@ -473,7 +484,7 @@ public class WhatsappVista extends JFrame {
                     BasicDBObject query = new BasicDBObject();
                     query.put("user", usuariEl);
                     query.put("missatge", missatgeEl);
-                    query.put("hora", new BasicDBObject("$gte", diaMissatge)); // comparar la horaMongoDB con una consulta $lte (menor o igual)
+                    query.put("hora", new BasicDBObject("$gte", diaMissatge)); 
                     collection.deleteOne(query);
 
                     JOptionPane.showMessageDialog(null, "Missatge eliminat amb èxit", "Informació", JOptionPane.INFORMATION_MESSAGE);
