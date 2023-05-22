@@ -3,9 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/M6_AppXat_MongoDB/MongoDB2/src/projecte/WhatsappVista.java</file>
-            <file>file:/D:/M6_AppXat_MongoDB/MongoDB2/src/projecte/login.java</file>
-            <file>file:/D:/M6_AppXat_MongoDB/MongoDB2/src/projecte/chats.java</file>
+            <file>file:/E:/Oleg/M6_AppXat_MongoDB/MongoDB2/src/projecte/WhatsappVista.java</file>
+            <file>file:/E:/Oleg/M6_AppXat_MongoDB/MongoDB2/src/projecte/chats.java</file>
+            <file>file:/E:/Oleg/M6_AppXat_MongoDB/MongoDB2/src/projecte/login.java</file>
+            <file>jar:file:/E:/Oleg/M6_AppXat_MongoDB/MongoDB2/plugins/mongo-java-driver-jdk11-3.12.2.jar!/com/mongodb/client/MongoClients.java</file>
         </group>
     </open-files>
 </project-private>
